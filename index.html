@@ -730,7 +730,6 @@ h1,h2,h3{font-family:var(--f-display);margin:0;font-weight:700}
   <div class="mapbox"><div id="map" role="img" aria-label="Mapa de Canoas com a densidade de sinistros envolvendo motocicletas ao longo das vias"></div>
     <div class="mapctl"><button class="btn" id="bFit" type="button">Ver toda a cidade</button></div></div>
   <aside class="panel">
-    <div><div class="flabel">Ano</div><div class="chips" id="cYear"></div></div>
     <div><div class="flabel">Camadas</div><div class="chips" id="cLay"></div></div>
     <div><div class="flabel">Destaques do resumo expandido</div><div class="dlist" id="dList"></div><div id="dInfo" class="vinfo"></div></div>
     <div><div class="flabel">Por via</div><select id="sVia" class="sel" aria-label="Escolher uma via"><option value="">Todas as vias</option></select><div id="viaInfo" class="vinfo"></div></div>
@@ -837,7 +836,7 @@ function kde(P){const vk=S.via?nkey(S.via):'';
   const lab=['','Baixa','Média','Alta','Muito alta','Crítica (3% mais altos)'];
   $('leg').innerHTML=`<div class="lgt">Densidade de sinistros (NKDE)</div><div class="lgs">Kernel quártico em rede · raio de 100 m · trechos de 10 m</div>`+
     [5,4,3,2,1].map(c=>`<div class="lgr"><i class="ks" style="background:var(${KCOL[c]});height:${2+c}px"></i><span>${lab[c]}</span></div>`).join('')+
-    `<div class="lgf">Classes por quantis do resumo expandido, calculadas com os 987 sinistros de 2023–2025, separadamente para vias urbanas (553) e rodovias federais (434). O filtro de ano muda só os pontos; o Kernel é o resultado publicado${S.via?'. Com uma via escolhida, aparecem só os trechos dela':''}.</div>`;
+    `<div class="lgf">Classes por quantis do resumo expandido, calculadas com os 987 sinistros de 2023–2025, separadamente para vias urbanas (553) e rodovias federais (434). A série 2023–2025 é analisada em conjunto, sem recorte por ano; o Kernel é o resultado publicado${S.via?'. Com uma via escolhida, aparecem só os trechos dela':''}.</div>`;
 }
 // rótulos de ruas
 const LBL={cv:null,segs:null};
@@ -915,7 +914,6 @@ const hiL=L.layerGroup().addTo(m);
     else fit();update();};})();
 function chips(el,items,set){el.innerHTML='';items.forEach(it=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=it.l;
   b.setAttribute('aria-pressed',set.has(it.k));b.onclick=()=>{if(set.has(it.k)){if(set.size>1||el.id!=='cYear')set.delete(it.k);}else set.add(it.k);b.setAttribute('aria-pressed',set.has(it.k));update();};el.appendChild(b);});}
-chips($('cYear'),[2023,2024,2025].map(y=>({k:y,l:String(y)})),S.years);
 chips($('cLay'),[{k:'r',l:'Kernel · rodovias'},{k:'u',l:'Kernel · vias urbanas'},{k:'seg',l:'Hotspots'},{k:'pts',l:'Pontos dos sinistros'},{k:'lbl',l:'Nomes das ruas'}],S.lay);
 function exclusive(k){const off=k==='seg'?['u','r']:(k==='u'||k==='r')?['seg']:[];off.forEach(o=>S.lay.delete(o));
   document.querySelectorAll('#cLay .chip').forEach(c=>{const kk={'Kernel · rodovias':'r','Kernel · vias urbanas':'u','Hotspots':'seg'}[c.textContent];if(kk)c.setAttribute('aria-pressed',S.lay.has(kk));});}

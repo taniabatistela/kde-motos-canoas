@@ -790,10 +790,10 @@ const KVK=KD.vn.map(nkey);
 // mapa
 const m=L.map('map',{preferCanvas:true,zoomSnap:.25,attributionControl:true,minZoom:11,maxZoom:19});
 m.attributionControl.setPrefix(false);
-const CA='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,attribution:CA}).addTo(m);
+const CA='Base: &copy; <a href="https://www.esri.com">Esri</a>, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:16,maxZoom:20,attribution:CA}).addTo(m);
 m.createPane('cartoLbl');m.getPane('cartoLbl').style.zIndex=450;m.getPane('cartoLbl').style.pointerEvents='none';
-const cartoLbl=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,pane:'cartoLbl'});
+const cartoLbl=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:16,maxZoom:20,pane:'cartoLbl'});
 const rend=L.canvas({padding:.3});m.createPane('kde').style.zIndex=420;m.createPane('ptsP').style.zIndex=440;
 const prend=L.canvas({padding:.3,pane:'ptsP'});
 const baiL=L.layerGroup().addTo(m),viasL=L.layerGroup().addTo(m),ptsL=L.layerGroup().addTo(m);
@@ -916,10 +916,10 @@ const hiL=L.layerGroup().addTo(m);
 function chips(el,items,set){el.innerHTML='';items.forEach(it=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=it.l;
   b.setAttribute('aria-pressed',set.has(it.k));b.onclick=()=>{if(set.has(it.k)){if(set.size>1||el.id!=='cYear')set.delete(it.k);}else set.add(it.k);b.setAttribute('aria-pressed',set.has(it.k));update();};el.appendChild(b);});}
 chips($('cYear'),[2023,2024,2025].map(y=>({k:y,l:String(y)})),S.years);
-chips($('cLay'),[{k:'r',l:'Kernel · rodovias'},{k:'u',l:'Kernel · vias urbanas'},{k:'seg',l:'Hotspots · resumo expandido'},{k:'pts',l:'Pontos dos sinistros'},{k:'lbl',l:'Nomes das ruas'}],S.lay);
+chips($('cLay'),[{k:'r',l:'Kernel · rodovias'},{k:'u',l:'Kernel · vias urbanas'},{k:'seg',l:'Hotspots'},{k:'pts',l:'Pontos dos sinistros'},{k:'lbl',l:'Nomes das ruas'}],S.lay);
 function exclusive(k){const off=k==='seg'?['u','r']:(k==='u'||k==='r')?['seg']:[];off.forEach(o=>S.lay.delete(o));
-  document.querySelectorAll('#cLay .chip').forEach(c=>{const kk={'Kernel · rodovias':'r','Kernel · vias urbanas':'u','Hotspots · resumo expandido':'seg'}[c.textContent];if(kk)c.setAttribute('aria-pressed',S.lay.has(kk));});}
-document.querySelectorAll('#cLay .chip').forEach(c=>{const kk={'Kernel · rodovias':'r','Kernel · vias urbanas':'u','Hotspots · resumo expandido':'seg'}[c.textContent];if(kk)c.addEventListener('click',()=>{if(S.lay.has(kk)){exclusive(kk);update();}});});
+  document.querySelectorAll('#cLay .chip').forEach(c=>{const kk={'Kernel · rodovias':'r','Kernel · vias urbanas':'u','Hotspots':'seg'}[c.textContent];if(kk)c.setAttribute('aria-pressed',S.lay.has(kk));});}
+document.querySelectorAll('#cLay .chip').forEach(c=>{const kk={'Kernel · rodovias':'r','Kernel · vias urbanas':'u','Hotspots':'seg'}[c.textContent];if(kk)c.addEventListener('click',()=>{if(S.lay.has(kk)){exclusive(kk);update();}});});
 function update(){const P=cur();const fat=P.filter(r=>r[4]===3).length,wp=P.filter(r=>D.pt&&D.pt[r.i]).length;
   const yrs=[...S.years].sort();const per=yrs.length===3?'2023–2025':yrs.join(', ');
   const flt=S.via||yrs.length<3;
